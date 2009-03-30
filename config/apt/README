@@ -1,0 +1,4 @@
+* 02-cron : (put it in your /etc/apt/apt.conf.d/)
+ - apt-get update every day
+ - apt-get upgrade -d every week
+ - apt-get auto-clean every month
