@@ -1,0 +1,13 @@
+This script backup all databases on the server, and keep on month of history.
+
+1 - CREATE /root/.my.cnf
+
+-------------------------
+[client]
+user = root
+password = secret
+host = localhost
+--------------------------
+
+2 - mkdir -p /var/backups/mysql/daily/
+3 - launch backup_mysql.sh
