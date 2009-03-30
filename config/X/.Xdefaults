@@ -1,0 +1,11 @@
+URxvt.transparent: true
+URxvt.foreground: white
+URxvt.background: black
+URxvt.scrollBar: false
+URxvt.shading: 75
+URxvt*urgentOnBell: true 
+#URxvt*termName: xterm-color
+
+XTerm*background:  #000000
+XTerm*foreground:  #ffffff
+XTerm*cursorColor: #cdc092
