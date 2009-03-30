@@ -1,0 +1,19 @@
+* "start,stop vm" :
+ - simply manage qemu virtual machine, "startvm boot the machine", "stopvm" shutdown it.
+ - startvm <vm_name> : read configuration of vm in ~/.qemu/conf.d/<vm_name> start the VM and store a qemu
+   monitoring socket (in ~/.qemu/monitor.d/<vm_name> )
+ - stopvm <vm_name> : send "system_powerdown" message to the monitor socket
+ - configuration e.g. : 
+
+$ cat .qemu/conf.d/debian32 
+MACADDR="52:54:00:00:01:01" 
+HDA="/dev/mapper/data-debian32"
+RAM="256"
+#OTHER=" -cdrom /home/laurent/Desktop/debian-40r3-i386-netinst.iso -boot d "
+
+$ cat .qemu/conf.d/winxp 
+MACADDR="52:54:00:00:00:02" 
+HDA="/dev/mapper/data-winxp"
+RAM="256"
+OTHER="-localtime"
+

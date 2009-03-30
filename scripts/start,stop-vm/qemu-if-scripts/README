@@ -1,0 +1,43 @@
+With this setup, my scripts put a qemu's vm in a bridge, all VM are bridged on it and
+the gateway il the qemu host.
+
+1 > Install Scripts :
+
+ put qemu-ifup and qemu-ifdown into /etc
+
+2 > Configure Network :
+
+ Create an Ethernet Bridge named br0
+
+ on archlinux : 
+
+br0="br0 10.0.0.1 netmask 255.255.255.0 up"
+
+ on Debian GNU/Linux : 
+
+auto br0
+iface br0 inet static
+        address 10.0.0.1
+        netmask 255.255.255.0
+        pre-up brctl addbr br0
+
+DON'T BRIDGE WITH PHYSICAL INTERFACE (like eth0)
+
+3 > Then configure your host as a gateway for VM : 
+
+ * setup your firewall :
+
+iptables -t nat -A POSTROUTING -s 10.0.0.0/16 -o eth0 -j MASQUERADE
+
+ * sysctl : 
+
+net.ipv4.ip_forward=1
+
+ * install dnsmasq for dhcp/dns
+
+ in dnsmasq.conf :
+
+interface="br0"
+listen-address="10.0.0.1"
+dhcp-range=10.0.0.50,10.0.0.150,255.255.255.0,12h
+read-ethers

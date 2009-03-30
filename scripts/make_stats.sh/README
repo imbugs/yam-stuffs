@@ -1,0 +1,16 @@
+This script is usefull for webalizer's statistics generation.
+It's allow you to have only one apache log file.
+
+You must use this LogFormat directive:
+
+LogFormat "%v:%p %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" vhost_combined_withport
+or 
+LogFormat "%v %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" vhost_combined
+
+and 
+
+CustomLog /var/log/apache2/access.log vhost_combined
+
+Then the script use splitlog to generate a log file per vhost, and give them to 
+webalizer.
+

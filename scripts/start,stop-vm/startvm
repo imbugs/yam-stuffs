@@ -1,0 +1,43 @@
+#!/bin/sh
+#set -x
+CMD=qemu-kvm
+BASE_DIR="$HOME/.qemu"
+CONF_DIR="$BASE_DIR/conf.d"
+MONITOR_DIR="$BASE_DIR/monitor.d"
+
+if [ $# -eq 1 ] && [ -f $CONF_DIR/$1 ]; then
+	source $CONF_DIR/$1
+	
+	arg="-net nic"
+        if [ -n ${MACADDR} ]; then
+                arg="${arg},macaddr=${MACADDR}"
+        fi
+
+	IFNAME=$(sudo tunctl -b -u$(whoami))
+	arg="${arg} -net tap,ifname=${IFNAME} "
+	
+	if [ -n ${HDA} ]; then
+		arg="${arg} -hda ${HDA}"
+	fi
+
+	if [ ${RAM} ] && [ -n ${RAM} ]; then
+		arg="$arg -m ${RAM}"
+	fi
+
+	if [ ${NOGRAPHIC} ] && [ ${NOGRAPHIC} -eq 1 ]; then
+		arg="${arg} -nographic"
+	fi
+
+	if [ "${OTHER}" ]; then
+		arg="${arg} ${OTHER}"
+	fi
+
+	arg="${arg} -monitor unix:$MONITOR_DIR/$1.cmd,server,nowait"
+else
+	echo "$0 : Error";
+	exit -1
+fi 
+
+echo ${arg}
+$CMD ${arg}
+sudo tunctl -d $IFNAME
