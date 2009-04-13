@@ -28,5 +28,5 @@ keychain ~/.ssh/id_rsa
 #basket &
 #stalonetray -t -geometry +14100+855 --grow-gravity E &
 #amazing&
-
+xrandr --output VGA1 --auto --left-of LVDS
 exec awesome

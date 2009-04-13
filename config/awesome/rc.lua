@@ -34,6 +34,20 @@ editor_cmd = terminal .. " -e " .. editor
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
 
+-- Because xrandr doesn't not handle screen index well
+scr = {}
+function set_screens()
+   if screen.count() == 1 then
+	  scr[1] = 1
+   else
+	  scr[1] = 2
+	  scr[2] = 1
+   end
+end
+
+set_screens()
+
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
 layouts =
 {
@@ -71,8 +85,8 @@ floatapps =
 -- Use the screen and tags indices.
 apptags =
 {
-    ["Navigator"] = { screen = screen.count(), tag=2},
-    ["Claws-mail"] = { screen = screen.count(), tag = 3},
+    ["Navigator"] = { screen = scr[screen.count()], tag=2},
+    ["Claws-mail"] = { screen = scr[screen.count()], tag = 3},
     ["weechat"] = {screen = 1, tag = 4},
 }
 
@@ -88,10 +102,10 @@ for s = 1, screen.count() do
     tags[s] = {}
     -- Create 9 tags per screen.
     for tagnumber = 1, 9 do
-        tags[s][tagnumber] = tag(tagnumber)
+       tags[s][tagnumber] = tag(tagnumber)
         -- Add tags to screen one by one
-        tags[s][tagnumber].screen = s
-	awful.layout.set(layouts[1], tags[s][tagnumber])
+       tags[s][tagnumber].screen = scr[s]
+       awful.layout.set(layouts[1], tags[s][tagnumber])
     end
     -- I'm sure you want to see at least one tag.
     tags[s][1].selected = true
@@ -143,33 +157,33 @@ mytasklist.buttons = { button({ }, 1, function (c) client.focus = c; c:raise() e
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
-    mypromptbox[s] = widget({ type = "textbox", align = "left" })
+    mypromptbox[scr[s]] = widget({ type = "textbox", align = "left" })
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    mylayoutbox[s] = widget({ type = "imagebox", align = "right" })
-    mylayoutbox[s]:buttons({ button({ }, 1, function () awful.layout.inc(layouts, 1) end),
+    mylayoutbox[scr[s]] = widget({ type = "imagebox", align = "right" })
+    mylayoutbox[scr[s]]:buttons({ button({ }, 1, function () awful.layout.inc(layouts, 1) end),
                              button({ }, 3, function () awful.layout.inc(layouts, -1) end),
                              button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                              button({ }, 5, function () awful.layout.inc(layouts, -1) end) })
     -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist.new(s, awful.widget.taglist.label.all, mytaglist.buttons)
+    mytaglist[scr[s]] = awful.widget.taglist.new(s, awful.widget.taglist.label.all, mytaglist.buttons)
 
     -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist.new(function(c)
+    mytasklist[scr[s]] = awful.widget.tasklist.new(function(c)
                                                   return awful.widget.tasklist.label.currenttags(c, s)
                                               end, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = wibox({ position = "top", fg = beautiful.fg_normal, bg = beautiful.bg_normal })
+    mywibox[scr[s]] = wibox({ position = "top", fg = beautiful.fg_normal, bg = beautiful.bg_normal })
     -- Add widgets to the wibox - order matters
-    mywibox[s].widgets = { mylauncher,
-                           mytaglist[s],
-                           mytasklist[s],
-                           mypromptbox[s],
+    mywibox[scr[s]].widgets = { mylauncher,
+                           mytaglist[scr[s]],
+                           mytasklist[scr[s]],
+                           mypromptbox[scr[s]],
                            mytextbox,
-                           mylayoutbox[s],
+                           mylayoutbox[scr[s]],
                            s == 1 and mysystray or nil }
-    mywibox[s].screen = s
+    mywibox[scr[s]].screen = s
 end
 -- }}}
 
@@ -378,7 +392,7 @@ bwibox.widgets = {
    space, 
    voliconbox  
 }
-bwibox.screen = 1
+bwibox.screen = scr[1]
 
 -- }}}
 
@@ -484,21 +498,21 @@ for i, v in ipairs( tags_key ) do
                    function ()
                        local screen = mouse.screen
                        if tags[screen][i] then
-                           awful.tag.viewonly(tags[screen][i])
+			  awful.tag.viewonly(tags[scr[screen]][i])
                        end
 		    end))
     table.insert(globalkeys, key({ modkey, "Control" }, v,
                    function ()
                        local screen = mouse.screen
                        if tags[screen][i] then
-                           tags[screen][i].selected = not tags[screen][i].selected
+			  tags[screen][i].selected = not tags[scr[screen]][i].selected
                        end
 		    end))
     table.insert(globalkeys, key({ modkey, "Shift" }, v,
                    function ()
                        if client.focus then
                            if tags[client.focus.screen][i] then
-                               awful.client.movetotag(tags[client.focus.screen][i])
+			      awful.client.movetotag(tags[scr[client.focus.screen]][i])
                            end
                        end
 		    end))
@@ -506,7 +520,7 @@ for i, v in ipairs( tags_key ) do
                    function ()
                        if client.focus then
                            if tags[client.focus.screen][i] then
-                               awful.client.toggletag(tags[client.focus.screen][i])
+			      awful.client.toggletag(tags[scr[client.focus.screen]][i])
                            end
                        end
 		    end))
