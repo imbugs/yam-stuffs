@@ -24,7 +24,8 @@ local widget
 
 local function basename(file)
    if options.show_basename then
-      return string.gsub(file, "(.*/)(.*)", " %2:") or file .. " :"
+      local f = string.gsub(file, "(.*/)(.*)", "%2") or file
+      return string.gsub(f, "(.*)(%.org)", " %1:") or " " .. f .. ":"
    else
       return ""
    end
@@ -82,13 +83,11 @@ local function parse_agenda()
 
                if flag then
                   local task = string.gsub(maybe_task, "*", "")
+                  local b, e, p = string.find(task, "%[#([ABC])%]")
                   local item = {
-                     task = task,
-                     file = files[i],
-                     deadline = deadline and not scheduled,
                      output = "<span color='" .. flag .. "'>" .. os.date("%d %b:", t) .. basename(files[i]) .. task .. "</span>",
                      when = t,
-                     flag = flag
+                     priority = p or "D"
                   }
                   table.insert(agenda, item)
                end
@@ -100,7 +99,9 @@ local function parse_agenda()
    end
 
    -- Sort by date
-   table.sort(agenda, function (a, b) return (a.when < b.when) end)
+   table.sort(agenda, function (a, b)
+                         return (a.when == b.when and a.priority < b.priority) or (a.when < b.when)
+                      end)
    return 0
 end
 
@@ -111,20 +112,22 @@ end
 --- Register org to a widget
 -- @param w The widget to register, must be a textbox
 -- @param f A table containing the paths to the org files to parse
--- @param opt Options, this is an optional table which can have the following keys: format: textbox format ("$past/$today/$soon/$future" by default), format_colorize: a boolean to colorize the texbox or not (true, by default), width: naughty's width (300 by default), position: naughty position, see naughty documentation for available positions ("top_right" by default), color_{past,today,soon,future}, delay_{soon,future}: in days (by default soon is 3 days, future is 7 days), show_basename: a boolean to show or not the org file basename in naughty when multiple files are used
+-- @param opt Options, this is an optional table which can have the following keys: format: textbox format ("$past/$today/$soon/$future" by default), format_colorize: a boolean to colorize the texbox or not (true, by default), width: naughty's width (400 by default), position: naughty position, see naughty documentation for available positions ("top_right" by default), timeout and hover_timeout: see naughty documentation, color_{past,today,soon,future}, delay_{soon,future}: in days (by default soon is 3 days, future is 7 days), show_basename: a boolean to show or not the org file basename in naughty when multiple files are used
 function register(w, f, opt)
    widget = w
    files  = f
 
-   options.format       = opt and opt.format       or "$past/$today/$soon/$future"
-   options.width        = opt and opt.width        or 300
-   options.position     = opt and opt.position     or "top_right"
-   options.color_past   = opt and opt.color_past   or "#FF0000"
-   options.color_today  = opt and opt.color_today  or "#DED200"
-   options.color_soon   = opt and opt.color_soon   or "#00D225"
-   options.color_future = opt and opt.color_future or "#00921A"
-   options.delay_soon   = opt and opt.delay_soon   or 3
-   options.delay_future = opt and opt.delay_future or 7
+   options.format        = opt and opt.format        or "$past/$today/$soon/$future"
+   options.width         = opt and opt.width         or 400
+   options.timeout       = opt and opt.timeout       or 0
+   options.hover_timeout = opt and opt.hover_timeout or 0
+   options.position      = opt and opt.position      or "top_right"
+   options.color_past    = opt and opt.color_past    or "#FF0000"
+   options.color_today   = opt and opt.color_today   or "#DED200"
+   options.color_soon    = opt and opt.color_soon    or "#00D225"
+   options.color_future  = opt and opt.color_future  or "#00921A"
+   options.delay_soon    = opt and opt.delay_soon    or 3
+   options.delay_future  = opt and opt.delay_future  or 7
    if opt and opt.format_colorize ~= nil then
       options.format_colorize = opt.format_colorize
    else
@@ -166,7 +169,7 @@ function naughty_open()
       n = naughty.notify({
                             text = table.concat(output, "\n"),
                             position = options.position,
-                            timeout = 0, hover_timeout = 0,
+                            timeout = options.timeout, hover_timeout = options.hover_timeout,
                             width = options.width, screen = capi.mouse.screen
                          })
    end
