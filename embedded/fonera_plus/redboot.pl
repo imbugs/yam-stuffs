@@ -33,7 +33,7 @@
                 print "<- \^C\n";
                 $t->close();
                 sleep(1);
-                system("telnet $host 9000");
+                system("nc $host 9000");
                 exit(0);
         } # if
  } # while
