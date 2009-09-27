@@ -1,0 +1,9 @@
+"My OpenWRT kamikaze compilation workflow"
+
+ - get sources (see http://www.openwrt.org)
+ - make defconfig
+ - ./scripts/feeds update
+ - make package/symlinks
+ - make menuconfig
+ - make dirclean
+ - make
