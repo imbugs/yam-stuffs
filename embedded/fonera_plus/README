@@ -27,7 +27,7 @@ Default server IP address: 192.168.1.254
 Console baud rate: 9600
 GDB connection port: 9000
 Force console for special debug messages: false
-Network debug at boot time: true
+Network debug at boot time: false
 Update RedBoot non-volatile configuration - continue (y/n)? y
 ... Erase from 0xa87e0000-0xa87f0000: .
 ... Program from 0x80ff0000-0x81000000 at 0xa87e0000: .
