@@ -1,66 +1,66 @@
 ---------------------------------                                                                                            
 -- subtle hacker awesome theme --                                                                                            
 ---------------------------------                                                                                            
+theme = {}
 
-font = terminus 8
+theme.font = "terminus 8"
+theme.bg_normal     = "#000000"
+theme.bg_focus      = "#2f4f4f"
+theme.bg_urgent     = "#8b0000"
 
-bg_normal     = #000000
-bg_focus      = #2f4f4f
-bg_urgent     = #8b0000
+theme.fg_normal     = "#f5deb3"
+theme.fg_focus      = "#ffa500"
+theme.fg_urgent     = "#ffff00"
 
-fg_normal     = #f5deb3
-fg_focus      = #ffa500
-fg_urgent     = #ffff00
+theme.border_width  = "1"
+theme.border_normal = "#2f4f4f"
+theme.border_focus  = "#ffa500"
+theme.border_marked = "#8b0000"
 
-border_width  = 1
-border_normal = #2f4f4f
-border_focus  = #ffa500
-border_marked = #8b0000
+-- You can use your own command to
+-- set your wallpaper
+theme.wallpaper_cmd =  "xsetroot -bg black"
 
-# You can use your own command to
-# set your wallpaper
-wallpaper_cmd =  xsetroot -bg black
+-- You can add as many variables as
+-- you wish and access them by using
+-- beautiful.variable in your rc.lua
+theme.bg_widget    = "#CC0000"
 
-# You can add as many variables as
-# you wish and access them by using
-# beautiful.variable in your rc.lua
-bg_widget    = #cc0000
+theme.fg_cursor     = "#00EE00"
 
-fg_cursor     = #00EE00
-
-# Display the taglist squares
-taglist_squares = true
+-- Display the taglist squares
+theme.taglist_squares = "true"
 
 
-# Display the taglist squares
-taglist_squares_sel = /usr/share/awesome/themes/default/taglist/squarefw.png
-taglist_squares_unsel = /usr/share/awesome/themes/default/taglist/squarew.png
+-- Display the taglist squares
+theme.taglist_squares_sel = "/usr/share/awesome/themes/default/taglist/squarefw.png"
+theme.taglist_squares_unsel = "/usr/share/awesome/themes/default/taglist/squarew.png"
 
-tasklist_floating_icon = /usr/share/awesome/themes/default/tasklist/floatingw.png
+theme.tasklist_floating_icon = "/usr/share/awesome/themes/default/tasklist/floatingw.png"
 
-# Variables set for theming menu
-# menu_[bg|fg]_[normal|focus]
-# menu_[border_color|border_width]
-menu_submenu_icon = /usr/share/awesome/themes/default/submenu.png
-menu_height   = 15
-menu_width    = 100
+-- Variables set for theming menu
+-- menu_[bg|fg]_[normal|focus]
+-- menu_[border_color|border_width]
+theme.menu_submenu_icon = "/usr/share/awesome/themes/default/submenu.png"
+theme.menu_height   = "15"
+theme.menu_width    = "100"
 
-# Define the image to load
-titlebar_close_button_normal = /usr/share/awesome/themes/default/titlebar/close.png
-titlebar_close_button_focus = /usr/share/awesome/themes/default/titlebar/closer.png
+-- Define the image to load
+theme.titlebar_close_button_normal = "/usr/share/awesome/themes/default/titlebar/close.png"
+theme.titlebar_close_button_focus = "/usr/share/awesome/themes/default/titlebar/closer.png"
 
-# You can use your own layout icons like this:
-layout_dwindle = /usr/share/awesome/themes/default/layouts/dwindlew.png
-layout_fairh = /usr/share/awesome/themes/default/layouts/fairhw.png
-layout_fairv = /usr/share/awesome/themes/default/layouts/fairvw.png
-layout_floating = /usr/share/awesome/themes/default/layouts/floatingw.png
-layout_magnifier = /usr/share/awesome/themes/default/layouts/magnifierw.png
-layout_max = /usr/share/awesome/themes/default/layouts/maxw.png
-layout_spiral = /usr/share/awesome/themes/default/layouts/spiralw.png
-layout_tilebottom = /usr/share/awesome/themes/default/layouts/tilebottomw.png
-layout_tileleft = /usr/share/awesome/themes/default/layouts/tileleftw.png
-layout_tile = /usr/share/awesome/themes/default/layouts/tilew.png
-layout_tiletop = /usr/share/awesome/themes/default/layouts/tiletopw.png
+-- You can use your own layout icons like this:
+theme.layout_dwindle = "/usr/share/awesome/themes/default/layouts/dwindlew.png"
+theme.layout_fairh = "/usr/share/awesome/themes/default/layouts/fairhw.png"
+theme.layout_fairv = "/usr/share/awesome/themes/default/layouts/fairvw.png"
+theme.layout_floating = "/usr/share/awesome/themes/default/layouts/floatingw.png"
+theme.layout_magnifier = "/usr/share/awesome/themes/default/layouts/magnifierw.png"
+theme.layout_max = "/usr/share/awesome/themes/default/layouts/maxw.png"
+theme.layout_spiral = "/usr/share/awesome/themes/default/layouts/spiralw.png"
+theme.layout_tilebottom = "/usr/share/awesome/themes/default/layouts/tilebottomw.png"
+theme.layout_tileleft = "/usr/share/awesome/themes/default/layouts/tileleftw.png"
+theme.layout_tile = "/usr/share/awesome/themes/default/layouts/tilew.png"
+theme.layout_tiletop = "/usr/share/awesome/themes/default/layouts/tiletopw.png"
 
-awesome_icon = /usr/share/awesome/icons/awesome16.png
+theme.awesome_icon = "/usr/share/awesome/icons/awesome16.png"
 

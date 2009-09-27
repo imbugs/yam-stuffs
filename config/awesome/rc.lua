@@ -8,14 +8,15 @@ require("naughty")
 require("wicked")
 require('invaders')
 
-config_path = os.getenv("XDG_CONFIG_HOME") .. "/awesome/"
+config_path = os.getenv("HOME") .. "/.config/awesome/"
 icons_path = config_path .. "icons/"
 cache_path = os.getenv("HOME") .. "/.cache/awesome/"
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
 -- The default is a dark theme
-theme_path = config_path .. "themes/subtle_hacker"
+-- theme_path = config_path .. "themes/subtle_hacker"
+theme_path = "/usr/share/awesome/themes/default/theme.lua"
 -- Uncommment this for a lighter theme
 -- theme_path = "/usr/share/awesome/themes/sky/theme"
 
@@ -74,6 +75,7 @@ floatapps =
     ["MPlayer"] = true,
     ["pinentry"] = true,
     ["gimp"] = true,
+    ["StefiTalk"] = true,
     -- by instance
     ["mocp"] = true,
     ["ncmpc"] = true,
@@ -116,7 +118,7 @@ end
 -- Create a textbox widget
 mytextbox = widget({ type = "textbox", align = "right" })
 -- Set the default text in textbox
-mytextbox.text = "<b><small> " .. AWESOME_RELEASE .. " </small></b>"
+mytextbox.text = "<b><small> Hello World </small></b>"
 
 -- Create a laucher widget and a main menu
 myawesomemenu = {
@@ -173,6 +175,9 @@ for s = 1, screen.count() do
                                                   return awful.widget.tasklist.label.currenttags(c, s)
                                               end, mytasklist.buttons)
 
+
+
+
     -- Create the wibox
     mywibox[scr[s]] = wibox({ position = "top", fg = beautiful.fg_normal, bg = beautiful.bg_normal })
     -- Add widgets to the wibox - order matters
@@ -182,30 +187,35 @@ for s = 1, screen.count() do
                            mypromptbox[scr[s]],
                            mytextbox,
                            mylayoutbox[scr[s]],
-                           s == 1 and mysystray or nil }
+                           scr[s] == 1 and mysystray or nil }
     mywibox[scr[s]].screen = s
 end
 -- }}}
 
 -- {{{ BottomWibox
 
----COMMAND {
-  get_volume = 'aumix -q|grep vol|awk \'{print $3}\''  
-  get_battery = 'acpi | cut -f 2 -d ,'
+-- ---COMMAND {
+--   get_volume = 'aumix -q|grep vol|awk \'{print $3}\''  
+--   get_battery = 'acpi | cut -f 2 -d ,'
   get_temp = 'acpi -t | grep Thermal\\ 0: | awk \'{print $4}\''
-  get_music = 'mpc | grep -v %'
----}
---function image_un(image) return "<bg image='"..image.."' resize=\"false\"/>" end
+--   get_music = 'mpc | grep -v %'
+-- ---}
+-- --function image_un(image) return "<bg image='"..image.."' resize=\"false\"/>" end
 -- Setup Org mode for awesome
 require("org-awesome")
-projects_file = os.getenv("HOME") .. "/org/projects.org"
 home_file = os.getenv("HOME") .. "/org/home.org"
 work_file = os.getenv("HOME") .. "/org/work.org"
-vnx_file = os.getenv("HOME") .. "/org/vnx.org"
-stage_file = os.getenv("HOME") .. "/org/stage.org"
 
 
-org_widget = widget({ type = "textbox", name = "org_widget", align = "left"})
+-- nagios_widget = widget({ type = "textbox", name = "nagios_widget", align = "right"})
+-- awful.hooks.timer.register(10, function() 
+--                                  statusfd = io.open('/home/laurent/.nagiosstatus/status.pango')
+--                                  nagios_widget.text = statusfd:read()
+--                                  statusfd:close()
+--                            end)
+
+
+org_widget = widget({ type = "textbox", name = "org_widget", align = "right"})
 org_widget:buttons({
                          button({ }, 1, function () awful.util.spawn("emacs " .. projects_file) end),
                          button({ }, 3, function () org.update() end)
@@ -214,64 +224,64 @@ org_widget.mouse_enter = function () org.naughty_open() end
 org_widget.mouse_leave = function () org.naughty_close() end
 org.register(
 	     org_widget, 
-	     {projects_file, home_file, vnx_file, stage_file, work_file},
-	     {width = 500, show_basename = true, position = 'bottom_left'}
+	     {home_file, work_file},
+	     {width = 600, show_basename = true, position = 'bottom_left'}
 	  )
 awful.hooks.timer.register(600, function() org.update() end)
 
---VOLUME WIDGET {
-  voliconbox = widget({ type = "imagebox", name = "voliconbox", align = "right" })
-  voliconbox.image = image(icons_path.."sound.png")
-  voliconbox:buttons({
-			button({ }, 4, function ()awful.util.spawn("aumix -v +1") end),
-			button({ }, 5, function ()awful.util.spawn("aumix -v -1") end),
-			button({ }, 1, function ()awful.util.spawn("mute") end)
-		     })
-  volumew = widget({type = 'progressbar', name = 'volumew', align = 'right'})
-  volumew.width = 37
-  volumew.height = 0.50
-  volumew.border_padding = 0
-  volumew.border_width = 0
-  volumew.ticks_count = 10
-  volumew.vertical = false
-  volumew:bar_properties_set('vol', {bg ='#000000',fg ='#ffffff',bordercolor = '#041F34',fg_off = '#484848',min_value = 0,max_value = 100})
-  wicked.register(volumew, 'function', function (widget, args)
-   local f = io.popen(get_volume)
-   local l = f:read()
-   f:close()
-   return l
-  end, 4,'vol')
-  volumew:buttons({
-		     button({ }, 1, function ()awful.util.spawn(terminal ..  " -geometry \"-1-173\" -name ncmpc -e ncmpc") end),
-		     button({ }, 3, function ()awful.util.spawn(terminal ..  " -geometry \"-1-173\" -name alsamixer -e alsamixer") end),
-		     button({ }, 4, function ()awful.util.spawn("aumix -v +1") end),
-		     button({ }, 5, function ()awful.util.spawn("aumix -v -1") end)
-		  })
--------------------
--------ICONE-------
--------------------
--- PATH
-iplay_icon = icons_path.."play.png"
-istop_icon = icons_path.."stop.png"
-inext_icon = icons_path.."suivant.png"
-iprev_icon = icons_path.."precendent.png"
-ipau_icon = icons_path.."pause.png"
+-- --VOLUME WIDGET {
+--   voliconbox = widget({ type = "imagebox", name = "voliconbox", align = "right" })
+--   voliconbox.image = image(icons_path.."sound.png")
+--   voliconbox:buttons({
+-- 			button({ }, 4, function ()awful.util.spawn("aumix -v +1") end),
+-- 			button({ }, 5, function ()awful.util.spawn("aumix -v -1") end),
+-- 			button({ }, 1, function ()awful.util.spawn("mute") end)
+-- 		     })
+--   volumew = widget({type = 'progressbar', name = 'volumew', align = 'right'})
+--   volumew.width = 37
+--   volumew.height = 0.50
+--   volumew.border_padding = 0
+--   volumew.border_width = 0
+--   volumew.ticks_count = 10
+--   volumew.vertical = false
+--   volumew:bar_properties_set('vol', {bg ='#000000',fg ='#ffffff',bordercolor = '#041F34',fg_off = '#484848',min_value = 0,max_value = 100})
+--   wicked.register(volumew, 'function', function (widget, args)
+--    local f = io.popen(get_volume)
+--    local l = f:read()
+--    f:close()
+--    return l
+--   end, 4,'vol')
+--   volumew:buttons({
+-- 		     button({ }, 1, function ()awful.util.spawn(terminal ..  " -geometry \"-1-173\" -name ncmpc -e ncmpc") end),
+-- 		     button({ }, 3, function ()awful.util.spawn(terminal ..  " -geometry \"-1-173\" -name alsamixer -e alsamixer") end),
+-- 		     button({ }, 4, function ()awful.util.spawn("aumix -v +1") end),
+-- 		     button({ }, 5, function ()awful.util.spawn("aumix -v -1") end)
+-- 		  })
+-- -------------------
+-- -------ICONE-------
+-- -------------------
+-- -- PATH
+-- iplay_icon = icons_path.."play.png"
+-- istop_icon = icons_path.."stop.png"
+-- inext_icon = icons_path.."suivant.png"
+-- iprev_icon = icons_path.."precendent.png"
+-- ipau_icon = icons_path.."pause.png"
 
---PLAY
-iplay = widget({ type = "imagebox", name = "iplay", align = "right"}) iplay.image = image(iplay_icon)
-iplay:buttons({button({ }, 1, function () awful.util.spawn("mpc toggle > /dev/null") end)})
---STOP
-istop = widget({ type = "imagebox", name = "istop", align = "right"}) istop.image = image(istop_icon)
-istop:buttons({button({ }, 1, function () awful.util.spawn("mpc stop > /dev/null") end)})
---PREVIOUS
-iprev = widget({ type = "imagebox", name = "iprev", align = "right"}) iprev.image = image(iprev_icon)
-iprev:buttons({button({ }, 1, function () awful.util.spawn("mpc prev > /dev/null") end)})
---NEXT
-inext = widget({ type = "imagebox", name = "inext", align = "right"}) inext.image = image(inext_icon)
-inext:buttons({button({ }, 1, function () awful.util.spawn("mpc next > /dev/null") end)})
---PAUSE
-ipau = widget({ type = "imagebox", name = "ipau", align = "right"}) ipau.image = image(ipau_icon)
-ipau:buttons({button({ }, 1, function () awful.util.spawn("mpc toggle > /dev/null") end)})
+-- --PLAY
+-- iplay = widget({ type = "imagebox", name = "iplay", align = "right"}) iplay.image = image(iplay_icon)
+-- iplay:buttons({button({ }, 1, function () awful.util.spawn("mpc toggle > /dev/null") end)})
+-- --STOP
+-- istop = widget({ type = "imagebox", name = "istop", align = "right"}) istop.image = image(istop_icon)
+-- istop:buttons({button({ }, 1, function () awful.util.spawn("mpc stop > /dev/null") end)})
+-- --PREVIOUS
+-- iprev = widget({ type = "imagebox", name = "iprev", align = "right"}) iprev.image = image(iprev_icon)
+-- iprev:buttons({button({ }, 1, function () awful.util.spawn("mpc prev > /dev/null") end)})
+-- --NEXT
+-- inext = widget({ type = "imagebox", name = "inext", align = "right"}) inext.image = image(inext_icon)
+-- inext:buttons({button({ }, 1, function () awful.util.spawn("mpc next > /dev/null") end)})
+-- --PAUSE
+-- ipau = widget({ type = "imagebox", name = "ipau", align = "right"}) ipau.image = image(ipau_icon)
+-- ipau:buttons({button({ }, 1, function () awful.util.spawn("mpc toggle > /dev/null") end)})
 
 ---NET WIDGET {
 netwidget = widget({
@@ -285,17 +295,17 @@ wicked.register(netwidget, 'net',
 ---}
 
 
----BATTERY WIDGET {
-  baticonbox = widget({ type = "imagebox", name = "baticonbox", align = "right" })
-  baticonbox.image = image(icons_path.."bat.png")
-  battextw = widget({type = "textbox",name = "battextw",align = "right"})
-  wicked.register(battextw, 'function', function (widget,args)
-    local f = io.popen(get_battery)
-    local l = f:read()
-    f:close()
-    return l
-  end, 10)
----}
+-- ---BATTERY WIDGET {
+--   baticonbox = widget({ type = "imagebox", name = "baticonbox", align = "right" })
+--   baticonbox.image = image(icons_path.."bat.png")
+--   battextw = widget({type = "textbox",name = "battextw",align = "right"})
+--   wicked.register(battextw, 'function', function (widget,args)
+--     local f = io.popen(get_battery)
+--     local l = f:read()
+--     f:close()
+--     return l
+--   end, 10)
+-- ---}
  
 ---TEMP WIDGET {
   tempiconbox = widget({ type = "imagebox", name = "tempiconbox",align = "right" })
@@ -338,21 +348,21 @@ wicked.register(membarw, 'mem', '$1',10,'mem')
   wicked.register(cpugraphwidget, 'cpu', '$1', 1, 'cpu')
 ---}
 
----MPD WIDGET {
- mpdiconbox = widget({ type = "imagebox", name = "mpdiconbox", align = "right" })
- mpdiconbox.image = image(icons_path.."moc.png")
- mpdw = widget({type = 'textbox', name = 'mpdw', align = "right"  })
- wicked.register(mpdw, 'function',function (widget,args)
-   local f = io.popen(get_music)
-   local l = f:read()
-   f:close()
-   if l == nil then
-     l = " "
-   else
-   return ' '..l
- end
-end, 3)
----}
+-- ---MPD WIDGET {
+--  mpdiconbox = widget({ type = "imagebox", name = "mpdiconbox", align = "right" })
+--  mpdiconbox.image = image(icons_path.."moc.png")
+--  mpdw = widget({type = 'textbox', name = 'mpdw', align = "right"  })
+--  wicked.register(mpdw, 'function',function (widget,args)
+--    local f = io.popen(get_music)
+--    local l = f:read()
+--    f:close()
+--    if l == nil then
+--      l = " "
+--    else
+--    return ' '..l
+--  end
+-- end, 3)
+-- ---}
 
 
 bar = widget({type="textbox",name="bar",align="right"}) bar.text = " - "
@@ -360,10 +370,9 @@ space = widget({type="textbox",name="space",align="right"}) space.text = " "
 
 bwibox = wibox({ position = "bottom", fg = beautiful.fg_normal, bg = beautiful.bg_normal })
 bwibox.widgets = { 
-   org_widget, 
    netwidget,
-   mpdiconbox,  
-   mpdw,
+--    mpdiconbox,  
+--    mpdw,
    --
    bar,
    cpuiconbox,
@@ -376,25 +385,28 @@ bwibox.widgets = {
    space,
    tempiconbox,
    tempw,
-   space,
-   baticonbox,
-   battextw,
-   bar,
-   --
-   iprev,
-   ipau,
-   istop,
-   iplay,
-   inext,
-   --
-   space,
-   volumew, 
-   space, 
-   voliconbox  
+--    space,
+--    baticonbox,
+--    battextw,
+    bar,
+    --
+--    iprev,
+--    ipau,
+--    istop,
+--    iplay,
+--    inext,
+--    --
+--    space,
+--    volumew, 
+    space, 
+--    voliconbox  
+   org_widget,
+   -- bar,
+   -- nagios_widget
 }
 bwibox.screen = scr[1]
 
--- }}}
+-- -- }}}
 
 -- {{{ Mouse bindings
 root.buttons({
@@ -548,6 +560,7 @@ root.keys(globalkeys)
 -- Hook function to execute when focusing a client.
 awful.hooks.focus.register(function (c)
     if not awful.client.ismarked(c) then
+
         c.border_color = beautiful.border_focus
     end
 end)
